@@ -38,3 +38,7 @@ npm run dev
 ## Status
 
 Early setup. The tax, market data, and planning engines have not been built yet.
+
+## License
+
+Northworth is licensed under the GNU Affero General Public License v3.0 or later. See [LICENSE](./LICENSE).

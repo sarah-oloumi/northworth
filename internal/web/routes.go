@@ -19,6 +19,7 @@ type appView struct {
 type tabView struct {
 	Name   string
 	Status string
+	Icon   string
 }
 
 func RegisterRoutes(mux *http.ServeMux) {
@@ -33,14 +34,14 @@ func renderApp(w http.ResponseWriter, r *http.Request) {
 	view := appView{
 		Title: "Northworth",
 		Tabs: []tabView{
-			{Name: "Dashboard", Status: "planned"},
-			{Name: "Cash Flow", Status: "planned"},
-			{Name: "Investments", Status: "planned"},
-			{Name: "Strategy", Status: "planned"},
-			{Name: "Property", Status: "planned"},
-			{Name: "Tax", Status: "planned"},
-			{Name: "References", Status: "planned"},
-			{Name: "Settings", Status: "planned"},
+			{Name: "Dashboard", Status: "planned", Icon: "layout-dashboard"},
+			{Name: "Cash Flow", Status: "planned", Icon: "wallet"},
+			{Name: "Investments", Status: "planned", Icon: "chart"},
+			{Name: "Strategy", Status: "planned", Icon: "compass"},
+			{Name: "Property", Status: "planned", Icon: "home"},
+			{Name: "Tax", Status: "planned", Icon: "calculator"},
+			{Name: "References", Status: "planned", Icon: "book-open"},
+			{Name: "Settings", Status: "planned", Icon: "settings"},
 		},
 	}
 

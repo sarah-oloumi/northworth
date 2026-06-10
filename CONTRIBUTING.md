@@ -53,6 +53,8 @@ Rules:
 
 Pull requests should be small enough to review carefully. Prefer several focused PRs over one mixed PR.
 
+Use squash merge for normal PRs. The PR title becomes the commit message on `main`, so the PR title must follow the same `type(scope): summary` format.
+
 Every PR should include:
 
 - Summary of behavior or documentation changed.
@@ -67,4 +69,3 @@ This workflow is influenced by:
 - [Software Engineering at Google: Code Review](https://abseil.io/resources/swe-book/html/ch09.html)
 - [Software Engineering at Google: Version Control and Branch Management](https://abseil.io/resources/swe-book/html/ch16.html)
 - [Software Engineering at Google: Critique](https://abseil.io/resources/swe-book/html/ch19.html)
-

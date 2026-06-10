@@ -11,6 +11,10 @@ coverage/
 
 # Private household data, exports, screenshots, and local notes
 private/
+PROJECT_INSTRUCTIONS.md
+PROJECT_NOTES.md
+*.instructions.md
+*.notes.md
 *.local.json
 *.private.json
 *personal*.json
@@ -18,4 +22,3 @@ private/
 *financial*.json
 exports/
 screenshots/private/
-

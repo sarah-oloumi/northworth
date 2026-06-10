@@ -1,4 +1,4 @@
-# Wealth Builder
+# Northworth
 
 A private, local-first Canadian household finance app for wealth building, tax planning, and investment strategy.
 
@@ -38,4 +38,3 @@ npm run dev
 ## Status
 
 Early setup. The tax, market data, and planning engines have not been built yet.
-

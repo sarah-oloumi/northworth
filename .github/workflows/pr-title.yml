@@ -1,0 +1,27 @@
+name: PR Title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          pattern='^(feat|fix|docs|test|refactor|perf|build|chore|revert)(\([a-z0-9][a-z0-9-]*\))?: [a-z][^[:cntrl:]]{0,71}$'
+
+          if [[ ! "$PR_TITLE" =~ $pattern ]]; then
+            echo "PR title must follow: type(scope): imperative summary"
+            echo "Allowed types: feat, fix, docs, test, refactor, perf, build, chore, revert"
+            echo "Example: feat(tax): add Ontario surtax constants"
+            echo "Received: $PR_TITLE"
+            exit 1
+          fi

@@ -24,7 +24,7 @@ This repository is intended to be public-safe. It must never contain real househ
 - No private financial data in git.
 - No personal data in tests, docs, screenshots, or fixtures.
 
-See [PRIVACY.md](./PRIVACY.md) and [PROJECT_INSTRUCTIONS.md](./PROJECT_INSTRUCTIONS.md) before adding features.
+See [PRIVACY.md](./PRIVACY.md) before adding features.
 
 ## Development
 

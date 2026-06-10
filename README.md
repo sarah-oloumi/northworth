@@ -38,6 +38,8 @@ The local app listens on `http://127.0.0.1:8787` by default. Override the bind a
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for commit, pull request, and review standards. See [docs/release-process.md](./docs/release-process.md) for versioning and tag policy.
 
+See [docs/design/product-brief.md](./docs/design/product-brief.md) for the initial product and UX direction.
+
 ## Status
 
 Early setup. The tax, market data, and planning engines have not been built yet.

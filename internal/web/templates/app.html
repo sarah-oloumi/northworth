@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ .Title }}</title>
+    <style>
+      :root {
+        color: #1d252c;
+        background: #f8f7f4;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 240px 1fr;
+      }
+
+      .sidebar {
+        background: #ffffff;
+        border-right: 1px solid #dedbd4;
+        padding: 24px 18px;
+      }
+
+      .brand {
+        margin: 0 0 28px;
+        font-size: 24px;
+        font-weight: 750;
+      }
+
+      .brand::before {
+        content: "";
+        display: inline-block;
+        width: 10px;
+        height: 18px;
+        margin-right: 10px;
+        border-radius: 2px;
+        background: #c1121f;
+        vertical-align: -2px;
+      }
+
+      .tabs {
+        display: grid;
+        gap: 6px;
+      }
+
+      .tab {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 40px;
+        padding: 0 10px;
+        border-radius: 6px;
+        color: #35424e;
+        text-decoration: none;
+      }
+
+      .tab:first-child {
+        background: #fff0f1;
+        color: #8f0d17;
+      }
+
+      .status {
+        color: #6f7d8a;
+        font-size: 12px;
+      }
+
+      main {
+        padding: 32px;
+      }
+
+      .panel {
+        max-width: 960px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+      }
+
+      p {
+        max-width: 680px;
+        color: #53616f;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 760px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          border-right: 0;
+          border-bottom: 1px solid #dedbd4;
+        }
+
+        .tabs {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <p class="brand">Northworth</p>
+        <nav class="tabs" aria-label="Primary">
+          {{ range .Tabs }}
+            <a class="tab" href="#">
+              <span>{{ .Name }}</span>
+              <span class="status">{{ .Status }}</span>
+            </a>
+          {{ end }}
+        </nav>
+      </aside>
+      <main>
+        <section class="panel">
+          <h1>Local-first household wealth planning</h1>
+          <p>
+            Northworth will help model cash flow, taxes, property, investments, and strategy
+            without sending private household data to a hosted service.
+          </p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

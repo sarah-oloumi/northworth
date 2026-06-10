@@ -1,7 +1,5 @@
-node_modules/
-dist/
-.vite/
 coverage/
+/northworth
 
 # Local environment and machine-specific files
 .env

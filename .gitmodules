@@ -1,0 +1,4 @@
+[submodule ".impeccable"]
+	path = .impeccable
+	url = https://github.com/pbakaus/impeccable
+	branch = main

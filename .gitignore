@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.vite/
+coverage/
+
+# Local environment and machine-specific files
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Private household data, exports, screenshots, and local notes
+private/
+*.local.json
+*.private.json
+*personal*.json
+*household*.json
+*financial*.json
+exports/
+screenshots/private/
+

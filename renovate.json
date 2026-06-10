@@ -1,0 +1,42 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(chore)"
+  ],
+  "dependencyDashboardOSVVulnerabilitySummary": "unresolved",
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "matchManagers": ["git-submodules"],
+      "groupName": "git submodules",
+      "labels": ["dependencies", "submodule"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions",
+      "labels": ["dependencies", "github-actions"]
+    },
+    {
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "go non-major dependencies",
+      "labels": ["dependencies", "go"]
+    },
+    {
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["major"],
+      "labels": ["dependencies", "go", "major"]
+    }
+  ],
+  "git-submodules": {
+    "enabled": true
+  },
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security", "dependencies"],
+    "assignees": ["sarah-oloumi"]
+  }
+}

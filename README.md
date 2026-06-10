@@ -31,9 +31,10 @@ See [PRIVACY.md](./PRIVACY.md) before adding features.
 This repo is scaffolded but intentionally not implemented yet.
 
 ```bash
-npm install
-npm run dev
+go run ./cmd/northworth
 ```
+
+The local app listens on `http://127.0.0.1:8787` by default. Override the bind address with `NORTHWORTH_ADDR`.
 
 ## Status
 

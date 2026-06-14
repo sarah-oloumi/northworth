@@ -72,10 +72,13 @@ Avoid language that implies regulated advice, certainty, or guaranteed suitabili
 
 A high-impact output is any output that could reasonably influence a user to change taxes, investments, debt, insurance, estate plans, real estate, or registered-account behavior.
 
+Calculations for high-impact outputs must come from deterministic formula code, not AI-generated arithmetic. Formula inputs, constants, assumptions, and source metadata must be visible enough for review.
+
 Every high-impact output must show:
 
 - scenario name and purpose
 - user inputs used
+- formula or calculation method used
 - assumptions used
 - source links and last-reviewed dates for tax/rule data
 - market-data timestamp where relevant
@@ -103,7 +106,7 @@ The app should require prominent professional-review language for:
 
 ## Source Rules
 
-Tax, account, benefit, and market-data logic must not rely on unsourced model memory. Source-backed rule data must include:
+Tax, account, benefit, market-data, and calculation logic must not rely on unsourced model memory. Source-backed rule data must include:
 
 - jurisdiction
 - tax year or effective date
@@ -113,11 +116,13 @@ Tax, account, benefit, and market-data logic must not rely on unsourced model me
 
 If a rule is `stale` or `unknown`, Northworth may still show an educational note, but it must not rank or optimize using that rule without a warning.
 
+AI may explain formula results, but it must not be the calculation engine.
+
 ## Privacy Rules
 
 Private user facts must stay local by default. Private household data must not be sent to market-data providers, analytics systems, AI services, or remote APIs unless the user explicitly configures and consents to that behavior.
 
-Remote AI or cloud features are out of scope until the AI privacy boundary is defined.
+Remote AI or cloud features must follow [ai-privacy-boundary.md](./ai-privacy-boundary.md).
 
 ## Official References
 
@@ -129,4 +134,3 @@ Use official or regulator sources first when developing finance/tax boundaries:
 - Financial Services Regulatory Authority of Ontario, Financial planners and financial advisors title protection: https://www.fsrao.ca/industry/financial-planners-and-financial-advisors
 - Canada Revenue Agency, Individuals and income tax: https://www.canada.ca/en/revenue-agency/services/tax/individuals.html
 - Canada Revenue Agency, Forms and publications: https://www.canada.ca/en/revenue-agency/services/forms-publications.html
-

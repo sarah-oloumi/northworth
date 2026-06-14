@@ -26,3 +26,8 @@ The app may fetch public market prices, but private household data must not be s
 
 User plans should be stored locally by default, such as browser storage or user-controlled local files. Cloud sync, analytics, or account features require an explicit design review before implementation.
 
+## AI Privacy Boundary
+
+Remote AI is disabled by default. The app may support offline local models and explicit online provider mode with user-supplied API keys. Private financial facts must not be sent to an AI service unless the user explicitly enables that feature, reviews the selected data, and confirms the send.
+
+See [docs/product/ai-privacy-boundary.md](docs/product/ai-privacy-boundary.md) before adding interviews, explanations, categorization helpers, or assistant-like behavior.

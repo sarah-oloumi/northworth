@@ -40,6 +40,8 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for commit, pull request, and review st
 
 See [docs/design/product-brief.md](./docs/design/product-brief.md) for the initial product and UX direction.
 
+See [docs/product/advice-boundaries.md](./docs/product/advice-boundaries.md) before adding tax, investment, debt, insurance, real estate, or recommendation-like features.
+
 ## Status
 
 Early setup. The tax, market data, and planning engines have not been built yet.

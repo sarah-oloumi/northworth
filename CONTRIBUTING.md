@@ -58,9 +58,20 @@ Use squash merge for normal PRs. The PR title becomes the commit message on `mai
 Every PR should include:
 
 - Summary of behavior or documentation changed.
+- Owning team labels and review partners when the change touches ADLC-managed work.
 - Verification performed.
 - Risk or privacy notes when relevant.
+- Source links for finance, tax, market-data, or investment-rule changes.
+- Lessons learned for meaningful implementation, architecture, finance, tax, or privacy changes.
 - Screenshots only when they contain fictional/demo data.
+
+## ADLC Team Model
+
+Northworth uses an Agentic Development Lifecycle (ADLC) team model for sensitive product areas.
+
+See [docs/adlc/roles.md](docs/adlc/roles.md) for team responsibilities, review partners, and lesson-learned expectations.
+
+Use [docs/decisions](docs/decisions) for architecture and product decisions that affect storage, privacy, security, finance/tax boundaries, source governance, public workflows, or major dependencies.
 
 ## References
 

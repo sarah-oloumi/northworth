@@ -3,125 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ .Title }}</title>
-    <style>
-      :root {
-        color: #1d252c;
-        background: #f8f7f4;
-        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      }
-
-      body {
-        margin: 0;
-      }
-
-      .icon-sprite {
-        display: none;
-      }
-
-      .app {
-        min-height: 100vh;
-        display: grid;
-        grid-template-columns: 240px 1fr;
-      }
-
-      .sidebar {
-        background: #ffffff;
-        border-right: 1px solid #dedbd4;
-        padding: 24px 18px;
-      }
-
-      .brand {
-        margin: 0 0 28px;
-        font-size: 24px;
-        font-weight: 750;
-      }
-
-      .brand::before {
-        content: "";
-        display: inline-block;
-        width: 10px;
-        height: 18px;
-        margin-right: 10px;
-        border-radius: 2px;
-        background: #c1121f;
-        vertical-align: -2px;
-      }
-
-      .tabs {
-        display: grid;
-        gap: 6px;
-      }
-
-      .tab {
-        display: grid;
-        grid-template-columns: 20px 1fr auto;
-        align-items: center;
-        gap: 10px;
-        min-height: 40px;
-        padding: 0 10px;
-        border-radius: 6px;
-        color: #35424e;
-        text-decoration: none;
-      }
-
-      .tab:first-child {
-        background: #fff0f1;
-        color: #8f0d17;
-      }
-
-      .tab-icon {
-        width: 18px;
-        height: 18px;
-        color: currentColor;
-        stroke-width: 1.9;
-      }
-
-      .tab-label {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .status {
-        color: #6f7d8a;
-        font-size: 12px;
-      }
-
-      main {
-        padding: 32px;
-      }
-
-      .panel {
-        max-width: 960px;
-      }
-
-      h1 {
-        margin: 0 0 8px;
-        font-size: 32px;
-      }
-
-      p {
-        max-width: 680px;
-        color: #53616f;
-        line-height: 1.6;
-      }
-
-      @media (max-width: 760px) {
-        .app {
-          grid-template-columns: 1fr;
-        }
-
-        .sidebar {
-          border-right: 0;
-          border-bottom: 1px solid #dedbd4;
-        }
-
-        .tabs {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-      }
-    </style>
+    <title>Northworth</title>
+    <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
     <svg class="icon-sprite" aria-hidden="true">
@@ -168,19 +51,51 @@
       <aside class="sidebar">
         <p class="brand">Northworth</p>
         <nav class="tabs" aria-label="Primary">
-          {{ range .Tabs }}
-            <a class="tab" href="#">
-              <svg class="tab-icon" aria-hidden="true">
-                <use href="#icon-{{ .Icon }}"></use>
-              </svg>
-              <span class="tab-label">{{ .Name }}</span>
-              <span class="status">{{ .Status }}</span>
-            </a>
-          {{ end }}
+          <a class="tab active" href="#">
+            <svg class="tab-icon" aria-hidden="true"><use href="#icon-layout-dashboard"></use></svg>
+            <span class="tab-label">Dashboard</span>
+            <span class="status">planned</span>
+          </a>
+          <a class="tab" href="#">
+            <svg class="tab-icon" aria-hidden="true"><use href="#icon-wallet"></use></svg>
+            <span class="tab-label">Cash Flow</span>
+            <span class="status">planned</span>
+          </a>
+          <a class="tab" href="#">
+            <svg class="tab-icon" aria-hidden="true"><use href="#icon-chart"></use></svg>
+            <span class="tab-label">Investments</span>
+            <span class="status">planned</span>
+          </a>
+          <a class="tab" href="#">
+            <svg class="tab-icon" aria-hidden="true"><use href="#icon-compass"></use></svg>
+            <span class="tab-label">Strategy</span>
+            <span class="status">planned</span>
+          </a>
+          <a class="tab" href="#">
+            <svg class="tab-icon" aria-hidden="true"><use href="#icon-home"></use></svg>
+            <span class="tab-label">Property</span>
+            <span class="status">planned</span>
+          </a>
+          <a class="tab" href="#">
+            <svg class="tab-icon" aria-hidden="true"><use href="#icon-calculator"></use></svg>
+            <span class="tab-label">Tax</span>
+            <span class="status">planned</span>
+          </a>
+          <a class="tab" href="#">
+            <svg class="tab-icon" aria-hidden="true"><use href="#icon-book-open"></use></svg>
+            <span class="tab-label">References</span>
+            <span class="status">planned</span>
+          </a>
+          <a class="tab" href="#">
+            <svg class="tab-icon" aria-hidden="true"><use href="#icon-settings"></use></svg>
+            <span class="tab-label">Settings</span>
+            <span class="status">planned</span>
+          </a>
         </nav>
       </aside>
       <main>
         <section class="panel">
+          <p class="eyebrow">Desktop-first local app</p>
           <h1>Local-first household wealth planning</h1>
           <p>
             Northworth will help model cash flow, taxes, property, investments, and strategy

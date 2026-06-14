@@ -6,8 +6,8 @@ The app should feel like a serious personal finance tool: calm, plain-spoken, fa
 
 ## Product Principles
 
-- **Local-only by default**: the app runs on the user's machine. No account, telemetry, hosted sync, or cloud storage is required.
-- **Self-hostable by choice**: advanced users may run it on their own network or behind a VPN, but the product must not require a public service.
+- **Desktop-first local app**: the app runs on the user's machine as a desktop application. No account, telemetry, hosted sync, or cloud storage is required.
+- **Self-hosting is not the primary UX**: advanced users may eventually run supporting services for themselves, but Northworth should not require a public service or home-server setup.
 - **Transparent calculations**: every important output should be traceable to inputs, assumptions, and source references.
 - **Public-safe repository**: fixtures, screenshots, examples, and docs must use fictional data.
 - **Useful before clever**: prefer familiar controls, predictable navigation, and clear tables over custom interactions.
@@ -130,6 +130,12 @@ Northworth can have three data categories:
 
 Market-data requests must not include private household data. Provider calls should request public symbols or identifiers only.
 
+## Technical Direction
+
+Northworth uses Rust + Tauri for the desktop shell and plain static HTML/CSS for the initial UI. Avoid adding a JavaScript package manager unless the product need clearly outweighs the added dependency surface.
+
+The UI should be treated as static assets rendered inside the desktop app. Calculation engines, reference catalogs, and persistence should live in Rust modules rather than in page-specific UI code.
+
 ## Design References
 
 The repository vendors Impeccable as a pinned design reference. For Northworth, apply its product-UI guidance in a restrained way:
@@ -139,4 +145,3 @@ The repository vendors Impeccable as a pinned design reference. For Northworth, 
 - fixed type scale over fluid display type
 - semantic color over decoration
 - consistent component vocabulary across screens
-

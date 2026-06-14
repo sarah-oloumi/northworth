@@ -1,6 +1,6 @@
 # Northworth Design Tokens
 
-This is the starting design-token draft for the Go-rendered web UI. Tokens should be implemented as CSS custom properties when the UI moves beyond the placeholder shell.
+This is the starting design-token draft for the Tauri desktop UI. Tokens should be implemented as CSS custom properties as the static app shell grows into the real product.
 
 ## Color Strategy
 
@@ -103,4 +103,3 @@ Use color semantically and with labels:
 - Neutral: baseline, unknown, inactive, historical context.
 
 Charts must remain understandable without color alone.
-

@@ -1,5 +1,7 @@
 coverage/
 /northworth
+target/
+src-tauri/target/
 
 # Local environment and machine-specific files
 .env

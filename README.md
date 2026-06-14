@@ -31,10 +31,10 @@ See [PRIVACY.md](./PRIVACY.md) before adding features.
 This repo is scaffolded but intentionally not implemented yet.
 
 ```bash
-go run ./cmd/northworth
+cargo run -p northworth
 ```
 
-The local app listens on `http://127.0.0.1:8787` by default. Override the bind address with `NORTHWORTH_ADDR`.
+Northworth is a desktop app scaffolded with Rust + Tauri and plain static HTML/CSS. It does not require Node or npm.
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for commit, pull request, and review standards. See [docs/release-process.md](./docs/release-process.md) for versioning and tag policy.
 

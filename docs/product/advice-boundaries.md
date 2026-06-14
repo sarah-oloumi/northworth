@@ -118,6 +118,8 @@ If a rule is `stale` or `unknown`, Northworth may still show an educational note
 
 AI may explain formula results, but it must not be the calculation engine.
 
+See [source-governance.md](./source-governance.md) for metadata, review, stale-data, and formula requirements.
+
 ## Privacy Rules
 
 Private user facts must stay local by default. Private household data must not be sent to market-data providers, analytics systems, AI services, or remote APIs unless the user explicitly configures and consents to that behavior.

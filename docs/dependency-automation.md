@@ -4,7 +4,7 @@ Northworth uses Renovate for dependency update pull requests.
 
 Renovate is configured to update:
 
-- Go modules from `go.mod` and `go.sum`
+- Rust crates from `Cargo.toml` and `Cargo.lock`
 - GitHub Actions used in `.github/workflows/`
 - git submodules, including `.impeccable`
 
@@ -18,7 +18,7 @@ If Renovate is unavailable, update Impeccable manually:
 git submodule update --remote .impeccable
 ```
 
-Northworth does not require Node or npm. Impeccable is vendored as a pinned design reference only.
+Northworth does not require Node or npm. The desktop shell uses Rust + Tauri with plain static HTML/CSS. Impeccable is vendored as a pinned design reference only.
 
 ## Notes
 

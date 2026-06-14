@@ -1,0 +1,19 @@
+[package]
+name = "northworth"
+version = "0.1.0"
+description = "Local-first Canadian household wealth planning."
+authors = ["Northworth contributors"]
+edition = "2021"
+license = "AGPL-3.0-or-later"
+rust-version = "1.75"
+
+[lib]
+name = "northworth_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+

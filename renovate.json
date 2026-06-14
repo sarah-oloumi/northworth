@@ -20,15 +20,15 @@
       "labels": ["dependencies", "github-actions"]
     },
     {
-      "matchManagers": ["gomod"],
+      "matchManagers": ["cargo"],
       "matchUpdateTypes": ["patch", "minor"],
-      "groupName": "go non-major dependencies",
-      "labels": ["dependencies", "go"]
+      "groupName": "rust non-major dependencies",
+      "labels": ["dependencies", "rust"]
     },
     {
-      "matchManagers": ["gomod"],
+      "matchManagers": ["cargo"],
       "matchUpdateTypes": ["major"],
-      "labels": ["dependencies", "go", "major"]
+      "labels": ["dependencies", "rust", "major"]
     }
   ],
   "git-submodules": {

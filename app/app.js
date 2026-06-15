@@ -133,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
   bindTabs();
   initializeCsvImport();
   initializeOfxImport();
+  initializeRiskInterview();
   loadDashboard();
 });
 
@@ -368,6 +369,14 @@ function initializeOfxImport() {
   previewOfxImport();
 }
 
+function initializeRiskInterview() {
+  document.querySelectorAll("#risk-interview-form select").forEach((select) => {
+    select.addEventListener("change", scoreRiskInterview);
+  });
+
+  scoreRiskInterview();
+}
+
 function showImportMode(mode) {
   document.querySelectorAll("[data-import-mode]").forEach((button) => {
     button.classList.toggle("active", button.dataset.importMode === mode);
@@ -494,6 +503,37 @@ async function previewOfxImport() {
   }
 
   renderOfxPreview(preview);
+}
+
+async function scoreRiskInterview() {
+  const answers = buildRiskAnswers();
+  const invoke = window.__TAURI__?.core?.invoke;
+  let result;
+
+  if (invoke) {
+    try {
+      result = await invoke("score_risk_interview", { answers });
+    } catch (error) {
+      console.error(error);
+      result = scoreRiskInterviewFallback(answers);
+    }
+  } else {
+    result = scoreRiskInterviewFallback(answers);
+  }
+
+  renderRiskInterviewResult(result);
+}
+
+function buildRiskAnswers() {
+  return {
+    time_horizon: value("risk-time-horizon"),
+    drawdown_response: value("risk-drawdown-response"),
+    income_stability: value("risk-income-stability"),
+    emergency_fund: value("risk-emergency-fund"),
+    debt_pressure: value("risk-debt-pressure"),
+    investing_experience: value("risk-investing-experience"),
+    liquidity_need: value("risk-liquidity-need"),
+  };
 }
 
 function buildCsvMapping() {
@@ -691,6 +731,44 @@ function renderOfxPreview(preview) {
   });
 }
 
+function renderRiskInterviewResult(result) {
+  text("risk-profile", formatRiskProfile(result.profile));
+  text("risk-score", `${result.score} / ${result.max_score}`);
+  text("risk-confidence", `${formatEnum(result.confidence)} confidence`);
+
+  const equity = result.equity_range;
+  const range = clear("risk-equity-range");
+  const target = element("div", "risk-target", [
+    element("span", null, "Planning equity target"),
+    element("strong", null, `${equity.target_percent}%`),
+  ]);
+  const track = element("div", "risk-track", [element("span", `w-${roundToStep(equity.target_percent)}`)]);
+  range.append(
+    target,
+    track,
+    element(
+      "p",
+      null,
+      `${equity.minimum_percent}% to ${equity.maximum_percent}% equity planning range. ${result.planning_input.planning_note}`,
+    ),
+  );
+
+  const factors = clear("risk-factors");
+  result.factors.forEach((factor) => {
+    factors.append(
+      element("div", "setting-row", [
+        element("strong", null, `${factor.label}: ${factor.points} / ${factor.max_points}`),
+        element("span", null, factor.explanation),
+      ]),
+    );
+  });
+
+  const limitations = clear("risk-limitations");
+  result.limitations.forEach((limitation) => {
+    limitations.append(element("div", "risk-limitation", limitation));
+  });
+}
+
 function bindTabs() {
   document.querySelectorAll("[data-view]").forEach((tab) => {
     tab.addEventListener("click", (event) => {
@@ -799,6 +877,22 @@ function formatCategory(category) {
   return category.Other ?? "Other";
 }
 
+function formatRiskProfile(profile) {
+  if (profile === "CapitalPreservation") {
+    return "Capital Preservation";
+  }
+
+  if (profile === "AggressiveGrowth") {
+    return "Aggressive Growth";
+  }
+
+  return formatEnum(profile);
+}
+
+function formatEnum(value) {
+  return value.replace(/([a-z])([A-Z])/g, "$1 $2");
+}
+
 function formatMonth(month) {
   const date = new Date(month.year, month.month - 1, 1);
   return date.toLocaleDateString("en-CA", { month: "short" });
@@ -869,6 +963,208 @@ function marketPolicy(cadence, label, refreshAfterDays, description) {
     refresh_after_days: refreshAfterDays,
     description,
   };
+}
+
+function scoreRiskInterviewFallback(answers) {
+  const factors = [
+    riskFactor(
+      "TimeHorizon",
+      "Time horizon",
+      riskPoints(answers.time_horizon, {
+        UnderThreeYears: 0,
+        ThreeToFiveYears: 1,
+        SixToTenYears: 2,
+        ElevenToTwentyYears: 3,
+        OverTwentyYears: 4,
+      }),
+      4,
+      {
+        UnderThreeYears: "Near-term money has little room to recover from market losses.",
+        ThreeToFiveYears: "A short-to-medium horizon allows limited volatility.",
+        SixToTenYears: "A medium horizon can usually absorb some market cycles.",
+        ElevenToTwentyYears: "A long horizon supports a higher growth allocation.",
+        OverTwentyYears: "Very long horizons can support meaningful equity exposure.",
+      }[answers.time_horizon],
+    ),
+    riskFactor(
+      "DrawdownResponse",
+      "Drawdown response",
+      riskPoints(answers.drawdown_response, { SellMost: 0, ReduceRisk: 1, HoldPlan: 3, BuyMore: 4 }),
+      4,
+      {
+        SellMost: "Selling after losses signals low tolerance for volatility.",
+        ReduceRisk: "Reducing risk after losses suggests a cautious limit.",
+        HoldPlan: "Holding through losses supports a higher long-term risk score.",
+        BuyMore: "Adding during losses signals high tolerance, subject to capacity.",
+      }[answers.drawdown_response],
+    ),
+    riskFactor(
+      "IncomeStability",
+      "Income stability",
+      riskPoints(answers.income_stability, { Unstable: 0, Variable: 1, Stable: 2, VeryStable: 3 }),
+      3,
+      {
+        Unstable: "Unstable income reduces capacity to absorb portfolio losses.",
+        Variable: "Variable income calls for more cushion before taking risk.",
+        Stable: "Stable income supports moderate risk capacity.",
+        VeryStable: "Very stable income can support higher risk capacity.",
+      }[answers.income_stability],
+    ),
+    riskFactor(
+      "EmergencyFund",
+      "Emergency fund",
+      riskPoints(answers.emergency_fund, {
+        UnderOneMonth: 0,
+        OneToThreeMonths: 1,
+        ThreeToSixMonths: 2,
+        OverSixMonths: 3,
+      }),
+      3,
+      {
+        UnderOneMonth: "Less than one month of cash is a major guardrail.",
+        OneToThreeMonths: "Some cash cushion exists, but risk capacity is still limited.",
+        ThreeToSixMonths: "A practical emergency fund supports portfolio discipline.",
+        OverSixMonths: "A strong emergency fund supports higher risk capacity.",
+      }[answers.emergency_fund],
+    ),
+    riskFactor(
+      "DebtPressure",
+      "Debt pressure",
+      riskPoints(answers.debt_pressure, { High: 0, Moderate: 1, Low: 2 }),
+      2,
+      {
+        High: "High debt pressure reduces flexibility.",
+        Moderate: "Moderate debt pressure leaves some planning flexibility.",
+        Low: "Low debt pressure improves capacity to stay invested.",
+      }[answers.debt_pressure],
+    ),
+    riskFactor(
+      "InvestingExperience",
+      "Investing experience",
+      riskPoints(answers.investing_experience, { New: 0, Some: 1, Experienced: 2 }),
+      2,
+      {
+        New: "New investors may need simpler plans and more conservative guardrails.",
+        Some: "Some experience supports moderate confidence in the answers.",
+        Experienced: "Experience with market cycles improves confidence in the answers.",
+      }[answers.investing_experience],
+    ),
+    riskFactor(
+      "LiquidityNeed",
+      "Liquidity need",
+      riskPoints(answers.liquidity_need, { High: 0, Medium: 1, Low: 2 }),
+      2,
+      {
+        High: "Near-term cash needs reduce capacity for volatile assets.",
+        Medium: "Some cash needs call for a balanced allocation.",
+        Low: "Low cash needs support a longer-term allocation.",
+      }[answers.liquidity_need],
+    ),
+  ];
+  const score = factors.reduce((sum, factor) => sum + factor.points, 0);
+  const profile = fallbackRiskProfile(score);
+  const equityRange = fallbackEquityRange(profile);
+  const confidence = fallbackRiskConfidence(answers);
+
+  return {
+    score,
+    max_score: 20,
+    profile,
+    confidence,
+    equity_range: equityRange,
+    planning_input: {
+      risk_profile: profile,
+      equity_target_percent: equityRange.target_percent,
+      planning_note:
+        "Use this as an input to portfolio planning, then compare against goals, taxes, account type, costs, currency exposure, and cash needs.",
+      not_a_trade_instruction: true,
+    },
+    factors,
+    limitations: fallbackRiskLimitations(answers, confidence),
+  };
+}
+
+function riskFactor(factor, label, points, maxPoints, explanation) {
+  return { factor, label, points, max_points: maxPoints, explanation };
+}
+
+function riskPoints(value, table) {
+  return table[value] ?? 0;
+}
+
+function fallbackRiskProfile(score) {
+  if (score <= 4) {
+    return "CapitalPreservation";
+  }
+
+  if (score <= 8) {
+    return "Conservative";
+  }
+
+  if (score <= 12) {
+    return "Balanced";
+  }
+
+  if (score <= 16) {
+    return "Growth";
+  }
+
+  return "AggressiveGrowth";
+}
+
+function fallbackEquityRange(profile) {
+  return {
+    CapitalPreservation: { minimum_percent: 0, target_percent: 20, maximum_percent: 35 },
+    Conservative: { minimum_percent: 20, target_percent: 40, maximum_percent: 55 },
+    Balanced: { minimum_percent: 45, target_percent: 60, maximum_percent: 75 },
+    Growth: { minimum_percent: 65, target_percent: 80, maximum_percent: 90 },
+    AggressiveGrowth: { minimum_percent: 80, target_percent: 90, maximum_percent: 100 },
+  }[profile];
+}
+
+function fallbackRiskConfidence(answers) {
+  const guardrails = [
+    answers.time_horizon === "UnderThreeYears",
+    answers.drawdown_response === "SellMost",
+    answers.emergency_fund === "UnderOneMonth",
+    answers.debt_pressure === "High",
+    answers.liquidity_need === "High",
+  ].filter(Boolean).length;
+
+  if (guardrails >= 2) {
+    return "Low";
+  }
+
+  if (guardrails === 1 || answers.investing_experience === "New") {
+    return "Medium";
+  }
+
+  return "High";
+}
+
+function fallbackRiskLimitations(answers, confidence) {
+  const limitations = [
+    "This score is deterministic and local; it is not a suitability review or a trade instruction.",
+    "Portfolio planning still needs account type, tax treatment, currency exposure, costs, and goal timing.",
+  ];
+
+  if (answers.time_horizon === "UnderThreeYears") {
+    limitations.push("Short time horizons can make volatile investments unsuitable even when other answers score higher.");
+  }
+
+  if (answers.emergency_fund === "UnderOneMonth") {
+    limitations.push("A thin emergency fund should usually be addressed before taking more portfolio risk.");
+  }
+
+  if (answers.debt_pressure === "High") {
+    limitations.push("High-interest or high-pressure debt can reduce practical risk capacity.");
+  }
+
+  if (confidence === "Low") {
+    limitations.push("Conflicting guardrail answers lower confidence; review the inputs before using this in a plan.");
+  }
+
+  return limitations;
 }
 
 function formatFreshness(freshness) {

@@ -89,7 +89,7 @@
           <a class="tab" href="#strategy" data-view="strategy">
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-compass"></use></svg>
             <span class="tab-label">Strategy</span>
-            <span class="status">planned</span>
+            <span class="status">local</span>
           </a>
           <a class="tab" href="#property" data-view="property">
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-home"></use></svg>
@@ -281,9 +281,91 @@
         </section>
 
         <section class="view" data-panel="strategy">
-          <div class="empty-state">
-            <h2>Strategy</h2>
-            <p>Plans will compare 3, 5, 10, 15, and 25 year paths from deterministic assumptions.</p>
+          <div class="work-grid strategy-grid">
+            <section class="surface">
+              <div class="surface-head">
+                <h2>Risk Interview</h2>
+                <span>local scoring</span>
+              </div>
+              <div class="risk-form" id="risk-interview-form">
+                <label class="field">
+                  <span>Time horizon</span>
+                  <select id="risk-time-horizon">
+                    <option value="OverTwentyYears">Over 20 years</option>
+                    <option value="ElevenToTwentyYears">11 to 20 years</option>
+                    <option value="SixToTenYears">6 to 10 years</option>
+                    <option value="ThreeToFiveYears">3 to 5 years</option>
+                    <option value="UnderThreeYears">Under 3 years</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Market loss response</span>
+                  <select id="risk-drawdown-response">
+                    <option value="HoldPlan">Hold the plan</option>
+                    <option value="ReduceRisk">Reduce risk</option>
+                    <option value="SellMost">Sell most risky assets</option>
+                    <option value="BuyMore">Buy more</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Income stability</span>
+                  <select id="risk-income-stability">
+                    <option value="Stable">Stable</option>
+                    <option value="VeryStable">Very stable</option>
+                    <option value="Variable">Variable</option>
+                    <option value="Unstable">Unstable</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Emergency fund</span>
+                  <select id="risk-emergency-fund">
+                    <option value="ThreeToSixMonths">3 to 6 months</option>
+                    <option value="OverSixMonths">Over 6 months</option>
+                    <option value="OneToThreeMonths">1 to 3 months</option>
+                    <option value="UnderOneMonth">Under 1 month</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Debt pressure</span>
+                  <select id="risk-debt-pressure">
+                    <option value="Moderate">Moderate</option>
+                    <option value="Low">Low</option>
+                    <option value="High">High</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Investing experience</span>
+                  <select id="risk-investing-experience">
+                    <option value="Some">Some</option>
+                    <option value="Experienced">Experienced</option>
+                    <option value="New">New</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Liquidity need</span>
+                  <select id="risk-liquidity-need">
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                    <option value="High">High</option>
+                  </select>
+                </label>
+              </div>
+            </section>
+            <section class="surface">
+              <div class="surface-head">
+                <h2>Risk Result</h2>
+                <span id="risk-confidence">pending</span>
+              </div>
+              <div class="risk-result">
+                <div class="risk-score">
+                  <strong id="risk-profile">Balanced</strong>
+                  <span id="risk-score">0 / 20</span>
+                </div>
+                <div class="risk-range" id="risk-equity-range"></div>
+                <div class="setting-list" id="risk-factors"></div>
+                <div class="risk-limitations" id="risk-limitations"></div>
+              </div>
+            </section>
           </div>
         </section>
 

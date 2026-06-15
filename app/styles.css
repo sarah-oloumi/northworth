@@ -499,9 +499,92 @@ p {
   align-items: start;
 }
 
+.strategy-grid {
+  align-items: start;
+}
+
 .import-stack {
   display: grid;
   gap: 14px;
+}
+
+.risk-form,
+.risk-result {
+  display: grid;
+  gap: 14px;
+}
+
+.risk-score {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: baseline;
+  padding: 14px;
+  border-radius: 6px;
+  background: #fff0f1;
+}
+
+.risk-score strong {
+  color: #8f0d17;
+  font-size: 22px;
+  line-height: 1.15;
+}
+
+.risk-score span {
+  color: #8f0d17;
+  font-weight: 750;
+}
+
+.risk-range {
+  display: grid;
+  gap: 8px;
+}
+
+.risk-target {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.risk-target span,
+.risk-range p {
+  color: #53616f;
+  font-size: 13px;
+}
+
+.risk-target strong {
+  color: #151b20;
+  font-size: 20px;
+}
+
+.risk-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eee9e0;
+}
+
+.risk-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #c1121f;
+}
+
+.risk-limitations {
+  display: grid;
+  gap: 8px;
+}
+
+.risk-limitation {
+  border: 1px solid #dedbd4;
+  border-radius: 6px;
+  background: #faf8f4;
+  color: #35424e;
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .mapping-grid {
@@ -750,8 +833,11 @@ input[type="file"] {
     text-align: left;
   }
 
-  .cadence-row {
+  .cadence-row,
+  .risk-score,
+  .risk-target {
     grid-template-columns: 1fr;
+    display: grid;
   }
 
   .cadence-days {

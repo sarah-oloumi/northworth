@@ -4,4 +4,5 @@ pub mod household;
 pub mod market_data;
 pub mod money;
 pub mod reports;
+pub mod risk;
 pub mod transaction;

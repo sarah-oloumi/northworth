@@ -4,6 +4,11 @@ const currencyFormatter = new Intl.NumberFormat("en-CA", {
   maximumFractionDigits: 0,
 });
 
+const sampleCsvText = `Date,Description,Amount,Account,Category
+2026-06-01,Demo paycheque,5000.00,Demo chequing,Income
+2026-06-02,Demo mortgage,-3200.50,Demo chequing,Housing
+2026-06-03,Demo groceries,-124.80,Demo chequing,Groceries`;
+
 const sampleAccounts = [
   account("chequing", "Household chequing", "Chequing", "OnBudget", 124000),
   account("savings", "Emergency fund", "Savings", "OnBudget", 1800000),
@@ -111,6 +116,7 @@ const fallbackState = {
 
 document.addEventListener("DOMContentLoaded", () => {
   bindTabs();
+  initializeCsvImport();
   loadDashboard();
 });
 
@@ -307,6 +313,232 @@ function renderMarketDataSettings(marketData) {
   });
 }
 
+function initializeCsvImport() {
+  const csvText = document.getElementById("csv-text");
+  const csvFile = document.getElementById("csv-file");
+  const amountMode = document.getElementById("csv-amount-mode");
+  const previewButton = document.getElementById("csv-preview-button");
+
+  csvText.value = sampleCsvText;
+  updateCsvHeaderControls();
+  updateAmountModeControls();
+
+  csvText.addEventListener("input", updateCsvHeaderControls);
+  csvFile.addEventListener("change", readSelectedCsvFile);
+  amountMode.addEventListener("change", updateAmountModeControls);
+  previewButton.addEventListener("click", previewCsvImport);
+
+  document.querySelectorAll(".mapping-grid select").forEach((select) => {
+    select.addEventListener("change", previewCsvImport);
+  });
+
+  previewCsvImport();
+}
+
+function readSelectedCsvFile(event) {
+  const file = event.target.files?.[0];
+
+  if (!file) {
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.addEventListener("load", () => {
+    document.getElementById("csv-text").value = String(reader.result ?? "");
+    updateCsvHeaderControls();
+    previewCsvImport();
+  });
+  reader.readAsText(file);
+}
+
+function updateCsvHeaderControls() {
+  const csvText = document.getElementById("csv-text").value;
+  const rows = parseCsvRows(csvText);
+  const headers = rows[0] ?? [];
+  const inferredDateColumn = inferColumn(headers, ["date", "posted date"]);
+
+  populateColumnSelect("csv-date-column", headers, inferredDateColumn);
+  populateColumnSelect(
+    "csv-description-column",
+    headers,
+    inferColumn(headers, ["description", "memo", "name", "payee"]),
+  );
+  populateColumnSelect("csv-amount-column", headers, inferColumn(headers, ["amount", "transaction amount"]));
+  populateColumnSelect("csv-debit-column", headers, inferColumn(headers, ["debit", "withdrawal"]));
+  populateColumnSelect("csv-credit-column", headers, inferColumn(headers, ["credit", "deposit"]));
+  populateColumnSelect("csv-account-column", headers, inferColumn(headers, ["account"], true), true);
+  populateColumnSelect("csv-category-column", headers, inferColumn(headers, ["category"], true), true);
+  document.getElementById("csv-date-format").value = inferDateFormat(rows, headers, inferredDateColumn);
+}
+
+function populateColumnSelect(id, headers, selectedValue, allowNone = false) {
+  const select = document.getElementById(id);
+  const options = [];
+
+  if (allowNone) {
+    options.push(option("", "None"));
+  }
+
+  headers.forEach((header) => options.push(option(header, header)));
+  select.replaceChildren(...options);
+  select.value = selectedValue ?? "";
+}
+
+function updateAmountModeControls() {
+  const isSplit = document.getElementById("csv-amount-mode").value === "split";
+
+  document.querySelectorAll(".amount-single").forEach((node) => {
+    node.classList.toggle("hidden", isSplit);
+  });
+  document.querySelectorAll(".amount-split").forEach((node) => {
+    node.classList.toggle("hidden", !isSplit);
+  });
+}
+
+async function previewCsvImport() {
+  const csvText = document.getElementById("csv-text").value;
+  const mapping = buildCsvMapping();
+  const invoke = window.__TAURI__?.core?.invoke;
+  let preview;
+
+  if (invoke) {
+    try {
+      preview = await invoke("preview_csv_transactions", { csvText, mapping });
+    } catch (error) {
+      console.error(error);
+      preview = previewCsvImportFallback(csvText, mapping);
+    }
+  } else {
+    preview = previewCsvImportFallback(csvText, mapping);
+  }
+
+  renderCsvPreview(preview);
+}
+
+function buildCsvMapping() {
+  const amountMode = document.getElementById("csv-amount-mode").value;
+  const amountMapping =
+    amountMode === "split"
+      ? {
+          Split: {
+            debit_column: value("csv-debit-column"),
+            credit_column: value("csv-credit-column"),
+          },
+        }
+      : {
+          Single: {
+            column: value("csv-amount-column"),
+            convention: value("csv-sign-convention"),
+          },
+        };
+
+  return {
+    date_column: value("csv-date-column"),
+    date_format: value("csv-date-format"),
+    description_column: value("csv-description-column"),
+    amount_mapping: amountMapping,
+    account_column: value("csv-account-column") || null,
+    category_column: value("csv-category-column") || null,
+  };
+}
+
+function previewCsvImportFallback(csvText, mapping) {
+  const rows = parseCsvRows(csvText);
+  const headers = rows[0] ?? [];
+  const transactions = [];
+  const errors = [];
+
+  rows.slice(1).forEach((row, index) => {
+    const sourceRow = index + 2;
+    const transaction = fallbackCsvTransaction(row, headers, sourceRow, mapping, errors);
+
+    if (transaction) {
+      transactions.push(transaction);
+    }
+  });
+
+  return { transactions, errors };
+}
+
+function fallbackCsvTransaction(row, headers, sourceRow, mapping, errors) {
+  const dateValue = csvValue(row, headers, mapping.date_column);
+  const description = csvValue(row, headers, mapping.description_column);
+  const amount = fallbackCsvAmount(row, headers, sourceRow, mapping.amount_mapping, errors);
+  const date = parseFallbackDate(dateValue, mapping.date_format);
+
+  if (!date) {
+    errors.push(csvError(sourceRow, mapping.date_column, `Invalid date \`${dateValue}\``));
+  }
+
+  if (!description) {
+    errors.push(csvError(sourceRow, mapping.description_column, "Missing description"));
+  }
+
+  if (!date || !description || !amount) {
+    return null;
+  }
+
+  return {
+    source_row: sourceRow,
+    date,
+    description,
+    amount,
+    account_id: null,
+    account_name: mapping.account_column ? csvValue(row, headers, mapping.account_column) || null : null,
+    category: mapping.category_column ? csvValue(row, headers, mapping.category_column) || null : null,
+    import_status: "PendingReview",
+  };
+}
+
+function fallbackCsvAmount(row, headers, sourceRow, amountMapping, errors) {
+  if (amountMapping.Single) {
+    const raw = csvValue(row, headers, amountMapping.Single.column);
+    const cents = parseMoneyCents(raw);
+
+    if (cents === null) {
+      errors.push(csvError(sourceRow, amountMapping.Single.column, `Invalid amount \`${raw}\``));
+      return null;
+    }
+
+    return money(amountMapping.Single.convention === "PositiveIsOutflow" ? -cents : cents);
+  }
+
+  const debit = parseMoneyCents(csvValue(row, headers, amountMapping.Split.debit_column) || "0");
+  const credit = parseMoneyCents(csvValue(row, headers, amountMapping.Split.credit_column) || "0");
+
+  if (debit === null || credit === null || (debit === 0 && credit === 0)) {
+    errors.push(csvError(sourceRow, null, "Expected a debit or credit amount"));
+    return null;
+  }
+
+  return money(credit - debit);
+}
+
+function renderCsvPreview(preview) {
+  text("csv-preview-count", `${preview.transactions.length} rows`);
+  text("csv-preview-status", preview.errors.length ? `${preview.errors.length} errors` : "preview only");
+
+  const errors = clear("csv-errors");
+  preview.errors.forEach((error) => {
+    const location = error.row ? `Row ${error.row}` : "Mapping";
+    errors.append(element("div", "import-error", `${location}: ${error.message}`));
+  });
+
+  const table = clear("csv-preview-table");
+  table.append(tableRow(["Row", "Date", "Description", "Amount"], "table-row table-head"));
+  preview.transactions.slice(0, 8).forEach((transaction) => {
+    table.append(
+      tableRow([
+        String(transaction.source_row),
+        formatDate(transaction.date),
+        transaction.description,
+        formatMoney(transaction.amount),
+      ]),
+    );
+  });
+}
+
 function bindTabs() {
   document.querySelectorAll("[data-view]").forEach((tab) => {
     tab.addEventListener("click", (event) => {
@@ -424,6 +656,10 @@ function text(id, value) {
   document.getElementById(id).textContent = value;
 }
 
+function value(id) {
+  return document.getElementById(id).value;
+}
+
 function clear(id) {
   const node = document.getElementById(id);
   node.replaceChildren();
@@ -442,6 +678,15 @@ function element(tagName, className, childrenOrText) {
   } else if (Array.isArray(childrenOrText)) {
     node.append(...childrenOrText);
   }
+
+  return node;
+}
+
+function option(value, label) {
+  const node = document.createElement("option");
+
+  node.value = value;
+  node.textContent = label;
 
   return node;
 }
@@ -484,6 +729,126 @@ function formatFreshness(freshness) {
   }
 
   return `${freshness.age_days} days old`;
+}
+
+function formatDate(date) {
+  return `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
+}
+
+function inferColumn(headers, candidates, allowBlank = false) {
+  const normalized = new Map(headers.map((header) => [header.trim().toLowerCase(), header]));
+
+  for (const candidate of candidates) {
+    if (normalized.has(candidate)) {
+      return normalized.get(candidate);
+    }
+  }
+
+  return allowBlank ? "" : headers[0] ?? "";
+}
+
+function inferDateFormat(rows, headers, dateColumn) {
+  const sample = csvValue(rows[1] ?? [], headers, dateColumn);
+  const parts = sample.replaceAll("/", "-").split("-").map(Number);
+
+  if (parts.length !== 3 || parts.some((part) => Number.isNaN(part))) {
+    return "IsoYearMonthDay";
+  }
+
+  if (parts[0] > 31) {
+    return "IsoYearMonthDay";
+  }
+
+  if (parts[0] > 12) {
+    return "DayMonthYear";
+  }
+
+  return "MonthDayYear";
+}
+
+function csvValue(row, headers, column) {
+  const index = headers.findIndex((header) => header.trim().toLowerCase() === column.trim().toLowerCase());
+
+  return index >= 0 ? row[index]?.trim() ?? "" : "";
+}
+
+function csvError(row, column, message) {
+  return { row, column, message };
+}
+
+function parseFallbackDate(value, format) {
+  const parts = value.trim().replaceAll("/", "-").split("-").map(Number);
+
+  if (parts.length !== 3 || parts.some((part) => Number.isNaN(part))) {
+    return null;
+  }
+
+  if (format === "MonthDayYear") {
+    return { year: parts[2], month: parts[0], day: parts[1] };
+  }
+
+  if (format === "DayMonthYear") {
+    return { year: parts[2], month: parts[1], day: parts[0] };
+  }
+
+  return { year: parts[0], month: parts[1], day: parts[2] };
+}
+
+function parseMoneyCents(value) {
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return 0;
+  }
+
+  const parenthesized = trimmed.startsWith("(") && trimmed.endsWith(")");
+  const cleaned = trimmed.replace(/[,$]/g, "").replace(/cad/gi, "").replace(/[()]/g, "").trim();
+  const parsed = Number(cleaned);
+
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+
+  return Math.round(Math.abs(parsed) * 100) * (parenthesized || parsed < 0 ? -1 : 1);
+}
+
+function parseCsvRows(csvText) {
+  const rows = [];
+  let row = [];
+  let value = "";
+  let quoted = false;
+
+  for (let index = 0; index < csvText.length; index += 1) {
+    const char = csvText[index];
+    const next = csvText[index + 1];
+
+    if (char === '"' && quoted && next === '"') {
+      value += '"';
+      index += 1;
+    } else if (char === '"') {
+      quoted = !quoted;
+    } else if (char === "," && !quoted) {
+      row.push(value.trim());
+      value = "";
+    } else if ((char === "\n" || char === "\r") && !quoted) {
+      if (char === "\r" && next === "\n") {
+        index += 1;
+      }
+      row.push(value.trim());
+      rows.push(row);
+      row = [];
+      value = "";
+    } else {
+      value += char;
+    }
+  }
+
+  if (value || row.length) {
+    row.push(value.trim());
+    rows.push(row);
+  }
+
+  return rows.filter((parsedRow) => parsedRow.some(Boolean));
 }
 
 function percentClass(value, max) {

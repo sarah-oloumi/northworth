@@ -9,6 +9,21 @@ const sampleCsvText = `Date,Description,Amount,Account,Category
 2026-06-02,Demo mortgage,-3200.50,Demo chequing,Housing
 2026-06-03,Demo groceries,-124.80,Demo chequing,Groceries`;
 
+const sampleOfxText = `<OFX>
+<BANKTRANLIST>
+<STMTTRN>
+<DTPOSTED>20260601
+<TRNAMT>5000.00
+<NAME>Demo paycheque
+</STMTTRN>
+<STMTTRN>
+<DTPOSTED>20260603
+<TRNAMT>-64.25
+<NAME>Demo fuel
+</STMTTRN>
+</BANKTRANLIST>
+</OFX>`;
+
 const sampleAccounts = [
   account("chequing", "Household chequing", "Chequing", "OnBudget", 124000),
   account("savings", "Emergency fund", "Savings", "OnBudget", 1800000),
@@ -117,6 +132,7 @@ const fallbackState = {
 document.addEventListener("DOMContentLoaded", () => {
   bindTabs();
   initializeCsvImport();
+  initializeOfxImport();
   loadDashboard();
 });
 
@@ -335,6 +351,35 @@ function initializeCsvImport() {
   previewCsvImport();
 }
 
+function initializeOfxImport() {
+  const ofxText = document.getElementById("ofx-text");
+  const ofxFile = document.getElementById("ofx-file");
+  const previewButton = document.getElementById("ofx-preview-button");
+
+  ofxText.value = sampleOfxText;
+  ofxText.addEventListener("input", previewOfxImport);
+  ofxFile.addEventListener("change", readSelectedOfxFile);
+  previewButton.addEventListener("click", previewOfxImport);
+
+  document.querySelectorAll("[data-import-mode]").forEach((button) => {
+    button.addEventListener("click", () => showImportMode(button.dataset.importMode));
+  });
+
+  previewOfxImport();
+}
+
+function showImportMode(mode) {
+  document.querySelectorAll("[data-import-mode]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.importMode === mode);
+  });
+  document.querySelectorAll("[data-import-panel]").forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.importPanel === mode);
+  });
+  document.querySelectorAll("[data-import-preview]").forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.importPreview === mode);
+  });
+}
+
 function readSelectedCsvFile(event) {
   const file = event.target.files?.[0];
 
@@ -348,6 +393,22 @@ function readSelectedCsvFile(event) {
     document.getElementById("csv-text").value = String(reader.result ?? "");
     updateCsvHeaderControls();
     previewCsvImport();
+  });
+  reader.readAsText(file);
+}
+
+function readSelectedOfxFile(event) {
+  const file = event.target.files?.[0];
+
+  if (!file) {
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.addEventListener("load", () => {
+    document.getElementById("ofx-text").value = String(reader.result ?? "");
+    previewOfxImport();
   });
   reader.readAsText(file);
 }
@@ -414,6 +475,25 @@ async function previewCsvImport() {
   }
 
   renderCsvPreview(preview);
+}
+
+async function previewOfxImport() {
+  const ofxText = document.getElementById("ofx-text").value;
+  const invoke = window.__TAURI__?.core?.invoke;
+  let preview;
+
+  if (invoke) {
+    try {
+      preview = await invoke("preview_ofx_transactions", { ofxText });
+    } catch (error) {
+      console.error(error);
+      preview = previewOfxImportFallback(ofxText);
+    }
+  } else {
+    preview = previewOfxImportFallback(ofxText);
+  }
+
+  renderOfxPreview(preview);
 }
 
 function buildCsvMapping() {
@@ -527,6 +607,78 @@ function renderCsvPreview(preview) {
 
   const table = clear("csv-preview-table");
   table.append(tableRow(["Row", "Date", "Description", "Amount"], "table-row table-head"));
+  preview.transactions.slice(0, 8).forEach((transaction) => {
+    table.append(
+      tableRow([
+        String(transaction.source_row),
+        formatDate(transaction.date),
+        transaction.description,
+        formatMoney(transaction.amount),
+      ]),
+    );
+  });
+}
+
+function previewOfxImportFallback(ofxText) {
+  const blocks = taggedBlocks(ofxText, "STMTTRN");
+
+  if (!blocks.length) {
+    return {
+      transactions: [],
+      errors: [{ transaction_index: null, field: null, message: "No OFX/QFX transactions found" }],
+    };
+  }
+
+  const transactions = [];
+  const errors = [];
+
+  blocks.forEach((block, index) => {
+    const sourceRow = index + 1;
+    const date = parseOfxDate(tagValue(block, "DTPOSTED"));
+    const amount = parseMoneyCents(tagValue(block, "TRNAMT") ?? "");
+    const description = tagValue(block, "NAME") || tagValue(block, "MEMO");
+
+    if (!date) {
+      errors.push(ofxError(sourceRow, "DTPOSTED", "Missing or invalid posted date"));
+    }
+
+    if (amount === null) {
+      errors.push(ofxError(sourceRow, "TRNAMT", "Missing or invalid transaction amount"));
+    }
+
+    if (!description) {
+      errors.push(ofxError(sourceRow, "NAME", "Missing transaction description"));
+    }
+
+    if (date && amount !== null && description) {
+      transactions.push({
+        source_row: sourceRow,
+        date,
+        description,
+        amount: money(amount),
+        account_id: null,
+        account_name: null,
+        category: null,
+        import_status: "PendingReview",
+      });
+    }
+  });
+
+  return { transactions, errors };
+}
+
+function renderOfxPreview(preview) {
+  text("ofx-preview-count", `${preview.transactions.length} rows`);
+  text("ofx-preview-status", preview.errors.length ? `${preview.errors.length} errors` : "preview only");
+
+  const errors = clear("ofx-errors");
+  preview.errors.forEach((error) => {
+    const location = error.transaction_index ? `Transaction ${error.transaction_index}` : "Statement";
+    errors.append(element("div", "import-error", `${location}: ${error.message}`));
+  });
+
+  const table = clear("ofx-preview-table");
+  table.append(tableRow(["Txn", "Date", "Description", "Amount"], "table-row table-head"));
   preview.transactions.slice(0, 8).forEach((transaction) => {
     table.append(
       tableRow([
@@ -776,6 +928,10 @@ function csvError(row, column, message) {
   return { row, column, message };
 }
 
+function ofxError(transactionIndex, field, message) {
+  return { transaction_index: transactionIndex, field, message };
+}
+
 function parseFallbackDate(value, format) {
   const parts = value.trim().replaceAll("/", "-").split("-").map(Number);
 
@@ -810,6 +966,69 @@ function parseMoneyCents(value) {
   }
 
   return Math.round(Math.abs(parsed) * 100) * (parenthesized || parsed < 0 ? -1 : 1);
+}
+
+function parseOfxDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  const digits = value.trim().match(/^\d+/)?.[0] ?? "";
+
+  if (digits.length < 8) {
+    return null;
+  }
+
+  return {
+    year: Number(digits.slice(0, 4)),
+    month: Number(digits.slice(4, 6)),
+    day: Number(digits.slice(6, 8)),
+  };
+}
+
+function taggedBlocks(contents, tag) {
+  const blocks = [];
+  const upper = contents.toUpperCase();
+  const openTag = `<${tag}>`;
+  const closeTag = `</${tag}>`;
+  let searchFrom = 0;
+
+  while (true) {
+    const openIndex = upper.indexOf(openTag, searchFrom);
+
+    if (openIndex < 0) {
+      break;
+    }
+
+    const blockStart = openIndex + openTag.length;
+    const closeIndex = upper.indexOf(closeTag, blockStart);
+
+    if (closeIndex < 0) {
+      break;
+    }
+
+    blocks.push(contents.slice(blockStart, closeIndex));
+    searchFrom = closeIndex + closeTag.length;
+  }
+
+  return blocks;
+}
+
+function tagValue(contents, tag) {
+  const upper = contents.toUpperCase();
+  const openTag = `<${tag}>`;
+  const start = upper.indexOf(openTag);
+
+  if (start < 0) {
+    return null;
+  }
+
+  const valueStart = start + openTag.length;
+  const rest = contents.slice(valueStart);
+  const valueEnd = rest.indexOf("<");
+  const value = rest.slice(0, valueEnd < 0 ? rest.length : valueEnd).trim();
+
+  return value || null;
 }
 
 function parseCsvRows(csvText) {

@@ -163,8 +163,12 @@
         </section>
 
         <section class="view" data-panel="imports">
+          <div class="import-switch" role="tablist" aria-label="Import format">
+            <button class="import-mode active" type="button" data-import-mode="csv">CSV</button>
+            <button class="import-mode" type="button" data-import-mode="ofx">OFX / QFX</button>
+          </div>
           <div class="import-grid">
-            <section class="surface">
+            <section class="surface import-panel active" data-import-panel="csv">
               <div class="surface-head">
                 <h2>CSV Mapping</h2>
                 <span id="csv-preview-status">preview only</span>
@@ -233,13 +237,38 @@
                 <button class="primary-action" id="csv-preview-button" type="button">Preview transactions</button>
               </div>
             </section>
-            <section class="surface">
+            <section class="surface import-panel" data-import-panel="ofx">
               <div class="surface-head">
-                <h2>Preview</h2>
+                <h2>OFX / QFX Statement</h2>
+                <span id="ofx-preview-status">preview only</span>
+              </div>
+              <div class="import-stack">
+                <label class="file-control">
+                  <span>OFX or QFX file</span>
+                  <input id="ofx-file" type="file" accept=".ofx,.qfx,application/x-ofx">
+                </label>
+                <label class="field">
+                  <span>OFX / QFX text</span>
+                  <textarea id="ofx-text" spellcheck="false"></textarea>
+                </label>
+                <button class="primary-action" id="ofx-preview-button" type="button">Preview transactions</button>
+              </div>
+            </section>
+            <section class="surface import-preview active" data-import-preview="csv">
+              <div class="surface-head">
+                <h2>CSV Preview</h2>
                 <span id="csv-preview-count">0 rows</span>
               </div>
               <div class="import-errors" id="csv-errors"></div>
               <div class="preview-table" id="csv-preview-table"></div>
+            </section>
+            <section class="surface import-preview" data-import-preview="ofx">
+              <div class="surface-head">
+                <h2>OFX / QFX Preview</h2>
+                <span id="ofx-preview-count">0 rows</span>
+              </div>
+              <div class="import-errors" id="ofx-errors"></div>
+              <div class="preview-table" id="ofx-preview-table"></div>
             </section>
           </div>
         </section>

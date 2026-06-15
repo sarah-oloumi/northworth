@@ -208,6 +208,33 @@ p {
   align-items: start;
 }
 
+.import-switch {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 14px;
+  padding: 4px;
+  border: 1px solid #dedbd4;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.import-mode {
+  min-height: 34px;
+  border: 0;
+  border-radius: 6px;
+  padding: 0 12px;
+  background: transparent;
+  color: #35424e;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.import-mode.active {
+  background: #fff0f1;
+  color: #8f0d17;
+}
+
 .surface,
 .empty-state {
   padding: 18px;
@@ -544,6 +571,16 @@ input[type="file"] {
 
 .hidden {
   display: none;
+}
+
+.import-panel,
+.import-preview {
+  display: none;
+}
+
+.import-panel.active,
+.import-preview.active {
+  display: block;
 }
 
 .import-errors {

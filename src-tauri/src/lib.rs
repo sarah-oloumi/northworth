@@ -9,6 +9,8 @@ pub fn run() {
             commands::budget::calculate_budget_month,
             commands::budget::summarize_budget_pies,
             commands::imports::preview_csv_transactions,
+            commands::market_data::assess_market_data_freshness,
+            commands::market_data::list_market_data_refresh_policies,
             commands::reports::build_calendar,
             commands::reports::build_cash_flow,
             commands::reports::build_net_worth,

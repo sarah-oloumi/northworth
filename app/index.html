@@ -99,7 +99,7 @@
           <a class="tab" href="#settings" data-view="settings">
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-settings"></use></svg>
             <span class="tab-label">Settings</span>
-            <span class="status">planned</span>
+            <span class="status">local</span>
           </a>
         </nav>
       </aside>
@@ -188,9 +188,34 @@
         </section>
 
         <section class="view" data-panel="settings">
-          <div class="empty-state">
-            <h2>Settings</h2>
-            <p>Offline mode, local model settings, and source refresh cadence belong here.</p>
+          <div class="work-grid settings-grid">
+            <section class="surface">
+              <div class="surface-head">
+                <h2>Market Data Refresh</h2>
+                <span id="market-freshness-status"></span>
+              </div>
+              <div class="cadence-list" id="market-cadence-list"></div>
+            </section>
+            <section class="surface">
+              <div class="surface-head">
+                <h2>Offline Behavior</h2>
+                <span>default</span>
+              </div>
+              <div class="setting-list">
+                <div class="setting-row">
+                  <strong>Core workflows</strong>
+                  <span>Imports, budgets, and source-backed calculations stay local.</span>
+                </div>
+                <div class="setting-row">
+                  <strong>Remote AI</strong>
+                  <span>Disabled unless a future reviewed provider mode is enabled.</span>
+                </div>
+                <div class="setting-row">
+                  <strong>Source cache</strong>
+                  <span>Cached public data can be used offline with visible stale warnings.</span>
+                </div>
+              </div>
+            </section>
           </div>
         </section>
       </main>

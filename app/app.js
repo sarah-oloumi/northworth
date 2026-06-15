@@ -7,7 +7,7 @@ const currencyFormatter = new Intl.NumberFormat("en-CA", {
 const sampleAccounts = [
   account("chequing", "Household chequing", "Chequing", "OnBudget", 124000),
   account("savings", "Emergency fund", "Savings", "OnBudget", 1800000),
-  account("mortgage", "Primary mortgage", "Mortgage", "OffBudgetTracking", -95000000),
+  account("mortgage", "Demo mortgage", "Mortgage", "OffBudgetTracking", -42000000),
   account("investments", "Long-term portfolio", "RegisteredInvestment", "OffBudgetTracking", 18400000),
 ];
 
@@ -93,8 +93,19 @@ const fallbackState = {
   },
   netWorth: {
     assets: money(20324000),
-    debts: money(95000000),
-    net_worth: money(-74676000),
+    debts: money(42000000),
+    net_worth: money(-21676000),
+  },
+  marketData: {
+    policies: fallbackMarketDataPolicies(),
+    freshness: {
+      cadence: "Monthly",
+      status: "Stale",
+      age_days: 45,
+      refresh_after_days: 31,
+      refreshed_at: { year: 2026, month: 5, day: 1 },
+      as_of: { year: 2026, month: 6, day: 15 },
+    },
   },
 };
 
@@ -127,6 +138,16 @@ async function calculateState() {
       invoke("calculate_budget_month", { input: budgetInput }),
       invoke("build_net_worth", { accounts: sampleAccounts }),
     ]);
+    const [marketPolicies, marketFreshness] = await Promise.all([
+      invoke("list_market_data_refresh_policies"),
+      invoke("assess_market_data_freshness", {
+        input: {
+          cadence: "Monthly",
+          refreshed_at: { year: 2026, month: 5, day: 1 },
+          as_of: { year: 2026, month: 6, day: 15 },
+        },
+      }),
+    ]);
 
     return {
       mode: "Rust calculations",
@@ -134,6 +155,10 @@ async function calculateState() {
       spending,
       budget,
       netWorth,
+      marketData: {
+        policies: marketPolicies,
+        freshness: marketFreshness,
+      },
     };
   } catch (error) {
     console.error(error);
@@ -156,6 +181,7 @@ function renderState(state) {
   renderSpendingMix(state.spending.categories, state.spending.total_spending.cents);
   renderCashFlowTable(state.cashFlow.months);
   renderBudgetTable(state.budget.categories);
+  renderMarketDataSettings(state.marketData);
 }
 
 function renderMetrics(state) {
@@ -255,6 +281,29 @@ function renderBudgetTable(categories) {
         formatMoney(category.available),
       ]),
     );
+  });
+}
+
+function renderMarketDataSettings(marketData) {
+  text("market-freshness-status", formatFreshness(marketData.freshness));
+
+  const container = clear("market-cadence-list");
+
+  marketData.policies.forEach((policy) => {
+    const isSelected = policy.cadence === marketData.freshness.cadence;
+    const row = element("div", isSelected ? "cadence-row selected" : "cadence-row", [
+      element("div", null, [
+        element("strong", null, policy.label),
+        element("span", null, policy.description),
+      ]),
+      element("span", "cadence-days", `${policy.refresh_after_days} days`),
+    ]);
+
+    if (isSelected) {
+      row.setAttribute("aria-current", "true");
+    }
+
+    container.append(row);
   });
 }
 
@@ -405,6 +454,36 @@ function tableRow(cells, className = "table-row") {
   });
 
   return row;
+}
+
+function fallbackMarketDataPolicies() {
+  return [
+    marketPolicy("Monthly", "Monthly", 31, "Refresh prices and issuer facts when a cache is more than 31 days old."),
+    marketPolicy("Quarterly", "Quarterly", 92, "Refresh when a cache is more than 92 days old."),
+    marketPolicy("Biannual", "Biannual", 183, "Refresh when a cache is more than 183 days old."),
+    marketPolicy("Yearly", "Yearly", 366, "Refresh when a cache is more than 366 days old."),
+  ];
+}
+
+function marketPolicy(cadence, label, refreshAfterDays, description) {
+  return {
+    cadence,
+    label,
+    refresh_after_days: refreshAfterDays,
+    description,
+  };
+}
+
+function formatFreshness(freshness) {
+  if (freshness.status === "FutureDated") {
+    return "future dated";
+  }
+
+  if (freshness.status === "Stale") {
+    return `stale by ${freshness.age_days - freshness.refresh_after_days} days`;
+  }
+
+  return `${freshness.age_days} days old`;
 }
 
 function percentClass(value, max) {

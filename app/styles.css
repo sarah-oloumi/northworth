@@ -454,9 +454,15 @@ p {
 }
 
 .flow-table,
-.budget-table {
+.budget-table,
+.cadence-list,
+.setting-list {
   display: grid;
   gap: 2px;
+}
+
+.settings-grid {
+  align-items: start;
 }
 
 .table-row {
@@ -506,6 +512,57 @@ p {
   gap: 10px;
 }
 
+.cadence-row,
+.setting-row {
+  display: grid;
+  gap: 6px;
+  min-height: 64px;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.cadence-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.cadence-row:nth-child(even),
+.setting-row:nth-child(even) {
+  background: #faf8f4;
+}
+
+.cadence-row.selected {
+  background: #fff0f1;
+  color: #8f0d17;
+}
+
+.cadence-row strong,
+.setting-row strong {
+  display: block;
+  color: #151b20;
+  font-size: 14px;
+}
+
+.cadence-row span,
+.setting-row span {
+  color: #53616f;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.cadence-row.selected strong,
+.cadence-row.selected span {
+  color: #8f0d17;
+}
+
+.cadence-days {
+  padding: 4px 8px;
+  border: 1px solid #dedbd4;
+  border-radius: 999px;
+  background: #ffffff;
+  white-space: nowrap;
+}
+
 @media (max-width: 980px) {
   .app {
     grid-template-columns: 1fr;
@@ -551,5 +608,13 @@ p {
 
   .table-row span {
     text-align: left;
+  }
+
+  .cadence-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cadence-days {
+    width: fit-content;
   }
 }

@@ -354,11 +354,16 @@ fn limitations(answers: RiskInterviewAnswers, confidence: RiskConfidence) -> Vec
     }
 
     if answers.emergency_fund == EmergencyFundCoverage::UnderOneMonth {
-        limitations.push("A thin emergency fund should usually be addressed before taking more portfolio risk.".to_string());
+        limitations.push(
+            "A thin emergency fund should usually be addressed before taking more portfolio risk."
+                .to_string(),
+        );
     }
 
     if answers.debt_pressure == DebtPressure::High {
-        limitations.push("High-interest or high-pressure debt can reduce practical risk capacity.".to_string());
+        limitations.push(
+            "High-interest or high-pressure debt can reduce practical risk capacity.".to_string(),
+        );
     }
 
     if confidence == RiskConfidence::Low {
@@ -370,11 +375,15 @@ fn limitations(answers: RiskInterviewAnswers, confidence: RiskConfidence) -> Vec
 
 fn time_horizon_explanation(value: TimeHorizon) -> &'static str {
     match value {
-        TimeHorizon::UnderThreeYears => "Near-term money has little room to recover from market losses.",
+        TimeHorizon::UnderThreeYears => {
+            "Near-term money has little room to recover from market losses."
+        }
         TimeHorizon::ThreeToFiveYears => "A short-to-medium horizon allows limited volatility.",
         TimeHorizon::SixToTenYears => "A medium horizon can usually absorb some market cycles.",
         TimeHorizon::ElevenToTwentyYears => "A long horizon supports a higher growth allocation.",
-        TimeHorizon::OverTwentyYears => "Very long horizons can support meaningful equity exposure.",
+        TimeHorizon::OverTwentyYears => {
+            "Very long horizons can support meaningful equity exposure."
+        }
     }
 }
 
@@ -382,8 +391,12 @@ fn drawdown_explanation(value: DrawdownResponse) -> &'static str {
     match value {
         DrawdownResponse::SellMost => "Selling after losses signals low tolerance for volatility.",
         DrawdownResponse::ReduceRisk => "Reducing risk after losses suggests a cautious limit.",
-        DrawdownResponse::HoldPlan => "Holding through losses supports a higher long-term risk score.",
-        DrawdownResponse::BuyMore => "Adding during losses signals high tolerance, subject to capacity.",
+        DrawdownResponse::HoldPlan => {
+            "Holding through losses supports a higher long-term risk score."
+        }
+        DrawdownResponse::BuyMore => {
+            "Adding during losses signals high tolerance, subject to capacity."
+        }
     }
 }
 
@@ -399,9 +412,15 @@ fn income_explanation(value: IncomeStability) -> &'static str {
 fn emergency_fund_explanation(value: EmergencyFundCoverage) -> &'static str {
     match value {
         EmergencyFundCoverage::UnderOneMonth => "Less than one month of cash is a major guardrail.",
-        EmergencyFundCoverage::OneToThreeMonths => "Some cash cushion exists, but risk capacity is still limited.",
-        EmergencyFundCoverage::ThreeToSixMonths => "A practical emergency fund supports portfolio discipline.",
-        EmergencyFundCoverage::OverSixMonths => "A strong emergency fund supports higher risk capacity.",
+        EmergencyFundCoverage::OneToThreeMonths => {
+            "Some cash cushion exists, but risk capacity is still limited."
+        }
+        EmergencyFundCoverage::ThreeToSixMonths => {
+            "A practical emergency fund supports portfolio discipline."
+        }
+        EmergencyFundCoverage::OverSixMonths => {
+            "A strong emergency fund supports higher risk capacity."
+        }
     }
 }
 
@@ -415,9 +434,13 @@ fn debt_pressure_explanation(value: DebtPressure) -> &'static str {
 
 fn investing_experience_explanation(value: InvestingExperience) -> &'static str {
     match value {
-        InvestingExperience::New => "New investors may need simpler plans and more conservative guardrails.",
+        InvestingExperience::New => {
+            "New investors may need simpler plans and more conservative guardrails."
+        }
         InvestingExperience::Some => "Some experience supports moderate confidence in the answers.",
-        InvestingExperience::Experienced => "Experience with market cycles improves confidence in the answers.",
+        InvestingExperience::Experienced => {
+            "Experience with market cycles improves confidence in the answers."
+        }
     }
 }
 

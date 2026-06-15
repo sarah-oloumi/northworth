@@ -1,3 +1,4 @@
+use super::money::MoneyAmount;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
@@ -433,28 +434,6 @@ impl Ownership {
 pub struct OwnershipShare {
     pub owner: PersonId,
     pub basis_points: u16,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct MoneyAmount {
-    pub cents: i64,
-    pub currency: Currency,
-}
-
-impl MoneyAmount {
-    pub fn cad_dollars(dollars: i64) -> Self {
-        Self {
-            cents: dollars * 100,
-            currency: Currency::Cad,
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum Currency {
-    Cad,
-    Usd,
-    Other(String),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

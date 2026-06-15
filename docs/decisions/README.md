@@ -27,3 +27,4 @@ Use [template.md](./template.md) for new records.
 - [0003: AI Privacy Boundary](./0003-ai-privacy-boundary.md)
 - [0004: Source Governance](./0004-source-governance.md)
 - [0005: Local Data Boundary](./0005-local-data-boundary.md)
+- [0006: Encryption At Rest](./0006-encryption-at-rest.md)

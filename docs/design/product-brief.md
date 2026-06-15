@@ -130,6 +130,8 @@ Northworth can have three data categories:
 
 Market-data requests must not include private household data. Provider calls should request public symbols or identifiers only.
 
+Durable private persistence must wait for the encryption-at-rest decision to be accepted. Until then, imported transactions and household facts should remain preview-only, in memory, or in explicit user-controlled files.
+
 ## Technical Direction
 
 Northworth uses Rust + Tauri for the desktop shell and plain static HTML/CSS for the initial UI. Avoid adding a JavaScript package manager unless the product need clearly outweighs the added dependency surface.

@@ -51,6 +51,11 @@
         <path d="M12 3v9h9A9 9 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-linejoin="round"/>
         <path d="M12 12V3a9 9 0 1 0 9 9h-9z" fill="none" stroke="currentColor" stroke-linejoin="round"/>
       </symbol>
+      <symbol id="icon-upload" viewBox="0 0 24 24">
+        <path d="M12 15V4" fill="none" stroke="currentColor" stroke-linecap="round"/>
+        <path d="M8 8l4-4 4 4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5 14v4.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V14" fill="none" stroke="currentColor" stroke-linecap="round"/>
+      </symbol>
     </svg>
     <div class="app">
       <aside class="sidebar">
@@ -70,6 +75,11 @@
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-pie"></use></svg>
             <span class="tab-label">Budget</span>
             <span class="status">local</span>
+          </a>
+          <a class="tab" href="#imports" data-view="imports">
+            <svg class="tab-icon" aria-hidden="true"><use href="#icon-upload"></use></svg>
+            <span class="tab-label">Imports</span>
+            <span class="status">preview</span>
           </a>
           <a class="tab" href="#investments" data-view="investments">
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-chart"></use></svg>
@@ -149,6 +159,88 @@
               <span id="budget-to-budget"></span>
             </div>
             <div class="budget-table" id="budget-table"></div>
+          </div>
+        </section>
+
+        <section class="view" data-panel="imports">
+          <div class="import-grid">
+            <section class="surface">
+              <div class="surface-head">
+                <h2>CSV Mapping</h2>
+                <span id="csv-preview-status">preview only</span>
+              </div>
+              <div class="import-stack">
+                <label class="file-control">
+                  <span>CSV file</span>
+                  <input id="csv-file" type="file" accept=".csv,text/csv">
+                </label>
+                <label class="field">
+                  <span>CSV text</span>
+                  <textarea id="csv-text" spellcheck="false"></textarea>
+                </label>
+                <div class="mapping-grid">
+                  <label class="field">
+                    <span>Date</span>
+                    <select id="csv-date-column"></select>
+                  </label>
+                  <label class="field">
+                    <span>Date format</span>
+                    <select id="csv-date-format">
+                      <option value="IsoYearMonthDay">YYYY-MM-DD</option>
+                      <option value="MonthDayYear">MM/DD/YYYY</option>
+                      <option value="DayMonthYear">DD/MM/YYYY</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span>Description</span>
+                    <select id="csv-description-column"></select>
+                  </label>
+                  <label class="field">
+                    <span>Amount style</span>
+                    <select id="csv-amount-mode">
+                      <option value="single">Single amount</option>
+                      <option value="split">Debit and credit</option>
+                    </select>
+                  </label>
+                  <label class="field amount-single">
+                    <span>Amount</span>
+                    <select id="csv-amount-column"></select>
+                  </label>
+                  <label class="field amount-single">
+                    <span>Sign convention</span>
+                    <select id="csv-sign-convention">
+                      <option value="NegativeIsOutflow">Negative is spending</option>
+                      <option value="PositiveIsOutflow">Positive is spending</option>
+                    </select>
+                  </label>
+                  <label class="field amount-split">
+                    <span>Debit</span>
+                    <select id="csv-debit-column"></select>
+                  </label>
+                  <label class="field amount-split">
+                    <span>Credit</span>
+                    <select id="csv-credit-column"></select>
+                  </label>
+                  <label class="field">
+                    <span>Account</span>
+                    <select id="csv-account-column"></select>
+                  </label>
+                  <label class="field">
+                    <span>Category</span>
+                    <select id="csv-category-column"></select>
+                  </label>
+                </div>
+                <button class="primary-action" id="csv-preview-button" type="button">Preview transactions</button>
+              </div>
+            </section>
+            <section class="surface">
+              <div class="surface-head">
+                <h2>Preview</h2>
+                <span id="csv-preview-count">0 rows</span>
+              </div>
+              <div class="import-errors" id="csv-errors"></div>
+              <div class="preview-table" id="csv-preview-table"></div>
+            </section>
           </div>
         </section>
 

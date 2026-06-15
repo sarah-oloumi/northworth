@@ -1,6 +1,7 @@
 pub mod commands;
 pub mod domain;
 pub mod imports;
+pub mod storage;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -12,6 +13,7 @@ pub fn run() {
             commands::imports::preview_ofx_transactions,
             commands::market_data::assess_market_data_freshness,
             commands::market_data::list_market_data_refresh_policies,
+            commands::storage::get_persistence_readiness,
             commands::reports::build_calendar,
             commands::reports::build_cash_flow,
             commands::reports::build_net_worth,

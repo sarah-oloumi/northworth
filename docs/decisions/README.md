@@ -20,3 +20,10 @@ Name records with a zero-padded sequence and short slug:
 
 Use [template.md](./template.md) for new records.
 
+## Records
+
+- [0001: Local-first ADLC](./0001-local-first-adlc.md)
+- [0002: Advice Boundaries](./0002-advice-boundaries.md)
+- [0003: AI Privacy Boundary](./0003-ai-privacy-boundary.md)
+- [0004: Source Governance](./0004-source-governance.md)
+- [0005: Local Data Boundary](./0005-local-data-boundary.md)

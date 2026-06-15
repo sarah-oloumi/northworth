@@ -24,7 +24,9 @@ The app may fetch public market prices, but private household data must not be s
 
 ## Local Data Boundary
 
-User plans should be stored locally by default, such as browser storage or user-controlled local files. Cloud sync, analytics, or account features require an explicit design review before implementation.
+User plans and imported financial data should be stored locally by default. Durable private persistence requires an accepted storage, encryption, backup, and recovery design before implementation. Cloud sync, analytics, or account features require an explicit design review before implementation.
+
+See [docs/product/local-data-boundary.md](docs/product/local-data-boundary.md) before adding local persistence, backups, exports, diagnostics, or audit trails.
 
 ## AI Privacy Boundary
 

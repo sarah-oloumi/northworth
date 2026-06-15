@@ -44,6 +44,8 @@ See [docs/product/advice-boundaries.md](./docs/product/advice-boundaries.md) bef
 
 See [docs/product/ai-privacy-boundary.md](./docs/product/ai-privacy-boundary.md) before adding interviews, explanations, categorization helpers, or assistant-like behavior.
 
+See [docs/product/local-data-boundary.md](./docs/product/local-data-boundary.md) and [docs/product/encryption-at-rest-spike.md](./docs/product/encryption-at-rest-spike.md) before adding durable private persistence, backups, restores, exports, or diagnostics.
+
 See [docs/product/source-governance.md](./docs/product/source-governance.md) before adding tax rules, account limits, market data, benefits, projections, or formula-backed financial calculations.
 
 ## Status

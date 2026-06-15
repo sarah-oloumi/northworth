@@ -76,7 +76,7 @@ Candidate approaches for the implementation spike:
 | Per-file encrypted exports | Gives users explicit portable backups. | Requires careful copy, restore, and key-loss language. |
 | Unencrypted private database | Simplest implementation. | Not acceptable for real private financial data without a separate accepted risk decision. |
 
-The first implementation should prefer boring, reviewable storage over clever abstractions. Database choice, encryption mechanism, and key storage should be documented in a future ADR before code persists private data.
+The first implementation should prefer boring, reviewable storage over clever abstractions. The current recommendation is documented in [encryption-at-rest-spike.md](./encryption-at-rest-spike.md) and [ADR 0006](../decisions/0006-encryption-at-rest.md).
 
 ## Key Loss and Recovery
 
@@ -136,4 +136,3 @@ Before a feature persists, exports, logs, syncs, or sends private data, reviewer
 - Are tests, fixtures, screenshots, and PR examples synthetic?
 - Does the feature preserve source-backed deterministic calculations?
 - Does stale or missing source data remain visible to the user?
-

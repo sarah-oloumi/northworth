@@ -1,10 +1,18 @@
 use crate::imports::csv::{
     preview_transactions as preview_transactions_domain, CsvImportMapping, CsvImportPreview,
 };
+use crate::imports::ofx::{
+    preview_transactions as preview_ofx_transactions_domain, OfxImportPreview,
+};
 
 #[tauri::command]
 pub fn preview_csv_transactions(csv_text: String, mapping: CsvImportMapping) -> CsvImportPreview {
     preview_transactions_domain(&csv_text, &mapping)
+}
+
+#[tauri::command]
+pub fn preview_ofx_transactions(ofx_text: String) -> OfxImportPreview {
+    preview_ofx_transactions_domain(&ofx_text)
 }
 
 #[cfg(test)]
@@ -32,6 +40,17 @@ mod tests {
 
         assert_eq!(preview.transactions.len(), 1);
         assert_eq!(preview.transactions[0].category, None);
+        assert!(preview.errors.is_empty());
+    }
+
+    #[test]
+    fn previews_ofx_transactions_through_command() {
+        let preview = preview_ofx_transactions(
+            "<OFX><STMTTRN><DTPOSTED>20260601<TRNAMT>-12.34<NAME>Demo debit</STMTTRN></OFX>"
+                .to_string(),
+        );
+
+        assert_eq!(preview.transactions.len(), 1);
         assert!(preview.errors.is_empty());
     }
 }

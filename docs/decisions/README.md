@@ -28,3 +28,4 @@ Use [template.md](./template.md) for new records.
 - [0004: Source Governance](./0004-source-governance.md)
 - [0005: Local Data Boundary](./0005-local-data-boundary.md)
 - [0006: Encryption At Rest](./0006-encryption-at-rest.md)
+- [0007: OFX/QFX Import Parser](./0007-ofx-qfx-import-parser.md)

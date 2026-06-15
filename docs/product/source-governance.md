@@ -14,6 +14,8 @@ Source governance exists because financial rules change. The app must be honest 
 - Never use formulas without reviewable inputs, constants, assumptions, and expected-result tests.
 - Keep private household data separate from public source data.
 
+Storage rules for separating public source caches from private household data are defined in [local-data-boundary.md](./local-data-boundary.md).
+
 ## Source Priority
 
 Use the highest available source tier.
@@ -165,4 +167,3 @@ Start with these official source families:
 - Bank of Canada Valet API documentation: https://www.bankofcanada.ca/valet/docs
 
 Issuer pages, exchange data, market-data providers, and provincial/territorial pages should be added only with clear field ownership, terms review, refresh cadence, and stale-data behavior.
-

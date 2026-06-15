@@ -16,6 +16,8 @@ The default AI posture is:
 - no private financial facts in prompts, logs, screenshots, fixtures, commits, or crash reports
 - no AI output that overrides source-backed calculations or advice-boundary rules
 
+Local storage, backup, export, and diagnostic rules for private financial data are defined in [local-data-boundary.md](./local-data-boundary.md).
+
 AI-assisted features may support three modes:
 
 - disabled or deterministic mode

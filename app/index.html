@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Northworth</title>
     <link rel="stylesheet" href="./styles.css">
+    <script src="./app.js" defer></script>
   </head>
   <body>
     <svg class="icon-sprite" aria-hidden="true">
@@ -46,47 +47,56 @@
         <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor"/>
         <path d="M12 3.5v2M12 18.5v2M5.98 5.98l1.42 1.42M16.6 16.6l1.42 1.42M3.5 12h2M18.5 12h2M5.98 18.02l1.42-1.42M16.6 7.4l1.42-1.42" fill="none" stroke="currentColor" stroke-linecap="round"/>
       </symbol>
+      <symbol id="icon-pie" viewBox="0 0 24 24">
+        <path d="M12 3v9h9A9 9 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-linejoin="round"/>
+        <path d="M12 12V3a9 9 0 1 0 9 9h-9z" fill="none" stroke="currentColor" stroke-linejoin="round"/>
+      </symbol>
     </svg>
     <div class="app">
       <aside class="sidebar">
         <p class="brand">Northworth</p>
         <nav class="tabs" aria-label="Primary">
-          <a class="tab active" href="#">
+          <a class="tab active" href="#dashboard" data-view="dashboard">
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-layout-dashboard"></use></svg>
             <span class="tab-label">Dashboard</span>
-            <span class="status">planned</span>
+            <span class="status">local</span>
           </a>
-          <a class="tab" href="#">
+          <a class="tab" href="#cash-flow" data-view="cash-flow">
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-wallet"></use></svg>
             <span class="tab-label">Cash Flow</span>
-            <span class="status">planned</span>
+            <span class="status">local</span>
           </a>
-          <a class="tab" href="#">
+          <a class="tab" href="#budget" data-view="budget">
+            <svg class="tab-icon" aria-hidden="true"><use href="#icon-pie"></use></svg>
+            <span class="tab-label">Budget</span>
+            <span class="status">local</span>
+          </a>
+          <a class="tab" href="#investments" data-view="investments">
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-chart"></use></svg>
             <span class="tab-label">Investments</span>
             <span class="status">planned</span>
           </a>
-          <a class="tab" href="#">
+          <a class="tab" href="#strategy" data-view="strategy">
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-compass"></use></svg>
             <span class="tab-label">Strategy</span>
             <span class="status">planned</span>
           </a>
-          <a class="tab" href="#">
+          <a class="tab" href="#property" data-view="property">
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-home"></use></svg>
             <span class="tab-label">Property</span>
             <span class="status">planned</span>
           </a>
-          <a class="tab" href="#">
+          <a class="tab" href="#tax" data-view="tax">
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-calculator"></use></svg>
             <span class="tab-label">Tax</span>
             <span class="status">planned</span>
           </a>
-          <a class="tab" href="#">
+          <a class="tab" href="#references" data-view="references">
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-book-open"></use></svg>
             <span class="tab-label">References</span>
             <span class="status">planned</span>
           </a>
-          <a class="tab" href="#">
+          <a class="tab" href="#settings" data-view="settings">
             <svg class="tab-icon" aria-hidden="true"><use href="#icon-settings"></use></svg>
             <span class="tab-label">Settings</span>
             <span class="status">planned</span>
@@ -94,13 +104,94 @@
         </nav>
       </aside>
       <main>
-        <section class="panel">
-          <p class="eyebrow">Desktop-first local app</p>
-          <h1>Local-first household wealth planning</h1>
-          <p>
-            Northworth will help model cash flow, taxes, property, investments, and strategy
-            without sending private household data to a hosted service.
-          </p>
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Sample household</p>
+            <h1 id="view-title">Dashboard</h1>
+          </div>
+          <div class="run-state" id="run-state">Loading local calculations</div>
+        </header>
+
+        <section class="view active" data-panel="dashboard" aria-labelledby="view-title">
+          <div class="metric-grid" id="dashboard-metrics"></div>
+          <div class="work-grid">
+            <section class="surface surface-wide">
+              <div class="surface-head">
+                <h2>Cash Flow</h2>
+                <span id="cash-flow-range"></span>
+              </div>
+              <div class="cash-chart" id="cash-chart"></div>
+            </section>
+            <section class="surface">
+              <div class="surface-head">
+                <h2>Spending Mix</h2>
+                <span id="spending-total"></span>
+              </div>
+              <div class="slice-list" id="spending-mix"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" data-panel="cash-flow">
+          <div class="surface">
+            <div class="surface-head">
+              <h2>Monthly Movement</h2>
+              <span id="cash-flow-net"></span>
+            </div>
+            <div class="flow-table" id="cash-flow-table"></div>
+          </div>
+        </section>
+
+        <section class="view" data-panel="budget">
+          <div class="surface">
+            <div class="surface-head">
+              <h2>Budget Month</h2>
+              <span id="budget-to-budget"></span>
+            </div>
+            <div class="budget-table" id="budget-table"></div>
+          </div>
+        </section>
+
+        <section class="view" data-panel="investments">
+          <div class="empty-state">
+            <h2>Investments</h2>
+            <p>Portfolio modelling will use local inputs plus source-backed market data caches.</p>
+          </div>
+        </section>
+
+        <section class="view" data-panel="strategy">
+          <div class="empty-state">
+            <h2>Strategy</h2>
+            <p>Plans will compare 3, 5, 10, 15, and 25 year paths from deterministic assumptions.</p>
+          </div>
+        </section>
+
+        <section class="view" data-panel="property">
+          <div class="empty-state">
+            <h2>Property</h2>
+            <p>Home, mortgage, carrying cost, and off-budget tracking views are next.</p>
+          </div>
+        </section>
+
+        <section class="view" data-panel="tax">
+          <div class="empty-state">
+            <h2>Tax</h2>
+            <p>CRA and province modules will be formula-backed before advice appears here.</p>
+          </div>
+        </section>
+
+        <section class="view" data-panel="references">
+          <div class="empty-state">
+            <h2>References</h2>
+            <p>Source metadata will live locally and show freshness before calculations rely on it.</p>
+          </div>
+        </section>
+
+        <section class="view" data-panel="settings">
+          <div class="empty-state">
+            <h2>Settings</h2>
+            <p>Offline mode, local model settings, and source refresh cadence belong here.</p>
+          </div>
         </section>
       </main>
     </div>

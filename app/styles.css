@@ -4,6 +4,11 @@
   font-family:
     ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
+  font-size: 16px;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
@@ -17,7 +22,7 @@ body {
 .app {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 248px minmax(0, 1fr);
 }
 
 .sidebar {
@@ -28,8 +33,10 @@ body {
 
 .brand {
   margin: 0 0 28px;
+  color: #151b20;
   font-size: 24px;
   font-weight: 750;
+  line-height: 1.1;
 }
 
 .brand::before {
@@ -50,7 +57,7 @@ body {
 
 .tab {
   display: grid;
-  grid-template-columns: 20px 1fr auto;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   min-height: 40px;
@@ -58,6 +65,10 @@ body {
   border-radius: 6px;
   color: #35424e;
   text-decoration: none;
+}
+
+.tab:hover {
+  background: #f3f1ed;
 }
 
 .tab.active {
@@ -84,15 +95,20 @@ body {
 }
 
 main {
-  padding: 32px;
+  min-width: 0;
+  padding: 28px 32px 36px;
 }
 
-.panel {
-  max-width: 960px;
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 24px;
 }
 
 .eyebrow {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   color: #8f0d17;
   font-size: 12px;
   font-weight: 700;
@@ -100,18 +116,397 @@ main {
   text-transform: uppercase;
 }
 
+h1,
+h2,
+p {
+  margin: 0;
+}
+
 h1 {
-  margin: 0 0 8px;
-  font-size: 32px;
+  color: #151b20;
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+h2 {
+  color: #151b20;
+  font-size: 17px;
+  line-height: 1.25;
 }
 
 p {
-  max-width: 680px;
   color: #53616f;
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
-@media (max-width: 760px) {
+.run-state {
+  min-height: 30px;
+  padding: 6px 10px;
+  border: 1px solid #e5c3c7;
+  border-radius: 6px;
+  background: #fff8f8;
+  color: #8f0d17;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.metric,
+.surface,
+.empty-state {
+  border: 1px solid #dedbd4;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.metric {
+  min-height: 96px;
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.metric span,
+.surface-head span,
+.slice span,
+.chart-month span {
+  color: #6f7d8a;
+  font-size: 13px;
+}
+
+.metric strong {
+  color: #151b20;
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.work-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.75fr);
+  gap: 16px;
+}
+
+.surface,
+.empty-state {
+  padding: 18px;
+}
+
+.surface-wide {
+  min-height: 360px;
+}
+
+.surface-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.cash-chart {
+  min-height: 268px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(88px, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+
+.chart-month {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.bars {
+  height: 210px;
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f8f7f4;
+}
+
+.bar {
+  width: 100%;
+  min-height: 10px;
+  border-radius: 4px 4px 0 0;
+}
+
+.bar.income {
+  background: #1f7a4d;
+}
+
+.bar.expense {
+  background: #c1121f;
+}
+
+.h-10 {
+  height: 10%;
+}
+
+.h-15 {
+  height: 15%;
+}
+
+.h-20 {
+  height: 20%;
+}
+
+.h-25 {
+  height: 25%;
+}
+
+.h-30 {
+  height: 30%;
+}
+
+.h-35 {
+  height: 35%;
+}
+
+.h-40 {
+  height: 40%;
+}
+
+.h-45 {
+  height: 45%;
+}
+
+.h-50 {
+  height: 50%;
+}
+
+.h-55 {
+  height: 55%;
+}
+
+.h-60 {
+  height: 60%;
+}
+
+.h-65 {
+  height: 65%;
+}
+
+.h-70 {
+  height: 70%;
+}
+
+.h-75 {
+  height: 75%;
+}
+
+.h-80 {
+  height: 80%;
+}
+
+.h-85 {
+  height: 85%;
+}
+
+.h-90 {
+  height: 90%;
+}
+
+.h-95 {
+  height: 95%;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.slice-list {
+  display: grid;
+  gap: 14px;
+}
+
+.slice {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 14px;
+  align-items: start;
+}
+
+.slice strong {
+  display: block;
+  color: #151b20;
+  font-size: 14px;
+}
+
+.slice-amount {
+  text-align: right;
+}
+
+.slice-track {
+  grid-column: 1 / -1;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eee9e0;
+}
+
+.slice-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #c1121f;
+}
+
+.w-0 {
+  width: 0%;
+}
+
+.w-5 {
+  width: 5%;
+}
+
+.w-10 {
+  width: 10%;
+}
+
+.w-15 {
+  width: 15%;
+}
+
+.w-20 {
+  width: 20%;
+}
+
+.w-25 {
+  width: 25%;
+}
+
+.w-30 {
+  width: 30%;
+}
+
+.w-35 {
+  width: 35%;
+}
+
+.w-40 {
+  width: 40%;
+}
+
+.w-45 {
+  width: 45%;
+}
+
+.w-50 {
+  width: 50%;
+}
+
+.w-55 {
+  width: 55%;
+}
+
+.w-60 {
+  width: 60%;
+}
+
+.w-65 {
+  width: 65%;
+}
+
+.w-70 {
+  width: 70%;
+}
+
+.w-75 {
+  width: 75%;
+}
+
+.w-80 {
+  width: 80%;
+}
+
+.w-85 {
+  width: 85%;
+}
+
+.w-90 {
+  width: 90%;
+}
+
+.w-95 {
+  width: 95%;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.flow-table,
+.budget-table {
+  display: grid;
+  gap: 2px;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 1.1fr repeat(3, minmax(120px, 1fr));
+  gap: 12px;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 12px;
+  border-radius: 6px;
+}
+
+.table-row:nth-child(even) {
+  background: #faf8f4;
+}
+
+.table-row strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table-row span {
+  min-width: 0;
+  color: #35424e;
+  text-align: right;
+}
+
+.table-row span:first-child,
+.table-row strong:first-child {
+  text-align: left;
+}
+
+.table-head,
+.budget-head {
+  background: #f3f1ed;
+  color: #53616f;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.empty-state {
+  max-width: 760px;
+  display: grid;
+  gap: 10px;
+}
+
+@media (max-width: 980px) {
   .app {
     grid-template-columns: 1fr;
   }
@@ -123,5 +518,38 @@ p {
 
   .tabs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metric-grid,
+  .work-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  main {
+    padding: 22px 18px 28px;
+  }
+
+  .topbar {
+    display: grid;
+  }
+
+  .tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .metric strong {
+    font-size: 22px;
+  }
+
+  .table-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 10px 12px;
+  }
+
+  .table-row span {
+    text-align: left;
   }
 }

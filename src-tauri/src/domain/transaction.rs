@@ -14,7 +14,7 @@ pub struct TransactionRecord {
     pub import_status: ImportReviewStatus,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct TransactionDate {
     pub year: u16,
     pub month: u8,
@@ -65,7 +65,7 @@ impl DateFormat {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub enum TransactionCategory {
     Bills,
     Needs,
